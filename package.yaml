@@ -1,0 +1,56 @@
+name:                Advent-of-Code
+version:             0.1.0.0
+github:              "thomasrules2000/Advent-of-Code"
+license:             BSD3
+author:              "Thomas Stacey"
+maintainer:          "Thomas.Stacey@warwick.ac.uk"
+copyright:           "2020 Thomas Stacey"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/Cskell#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- containers
+- split
+- vector
+- matrix
+- extra
+- unordered-containers
+- mtl
+
+library:
+  source-dirs: src
+  default-extensions:
+    - ApplicativeDo
+    - TupleSections
+    - NumericUnderscores
+    - TypeSynonymInstances
+    - FlexibleInstances
+    - ScopedTypeVariables
+    - DeriveGeneric
+    - DeriveAnyClass
+    - LambdaCase 
+    - DeriveFunctor
+    - DeriveFoldable
+    - RecordWildCards
+
+executables:
+  AOC-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - Advent-of-Code
