@@ -1,10 +1,10 @@
 name:                Advent-of-Code
 version:             0.1.0.0
-github:              "thomasrules2000/Advent-of-Code"
+github:              "thomasrules2000/Advent-of-Code-2022"
 license:             BSD3
 author:              "Thomas Stacey"
-maintainer:          "Thomas.Stacey@warwick.ac.uk"
-copyright:           "2020 Thomas Stacey"
+maintainer:          "Thomas@ThomasStacey.co.uk"
+copyright:           "2022 Thomas Stacey"
 
 extra-source-files:
 - README.md

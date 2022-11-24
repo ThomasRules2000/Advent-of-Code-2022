@@ -1,19 +1,19 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.35.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f1d0dbce13758472cef31029a6479351f67963a2dd398899051492e9b086988e
+-- hash: 276783f487d9af87078a981d235497312264c2b1548963658346a89d64166858
 
 name:           Advent-of-Code
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/Cskell#readme>
-homepage:       https://github.com/thomasrules2000/Advent-of-Code#readme
-bug-reports:    https://github.com/thomasrules2000/Advent-of-Code/issues
+homepage:       https://github.com/thomasrules2000/Advent-of-Code-2022#readme
+bug-reports:    https://github.com/thomasrules2000/Advent-of-Code-2022/issues
 author:         Thomas Stacey
-maintainer:     Thomas.Stacey@warwick.ac.uk
-copyright:      2020 Thomas Stacey
+maintainer:     Thomas@ThomasStacey.co.uk
+copyright:      2022 Thomas Stacey
 license:        BSD3
 build-type:     Simple
 extra-source-files:
@@ -21,7 +21,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/thomasrules2000/Advent-of-Code
+  location: https://github.com/thomasrules2000/Advent-of-Code-2022
 
 library
   exposed-modules:
