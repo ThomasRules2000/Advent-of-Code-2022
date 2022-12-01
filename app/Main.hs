@@ -144,6 +144,7 @@ printUsage :: IO a
 printUsage = do
     putStrLn "Usage: stack run [n1 [n2 [...]]]"
     putStrLn "On days of Advent, n1 is automatically specified if you do not"
+    putStrLn "-a      Run all days instead of the ones specified"
     putStrLn "--test  Use Dayn_test.txt instead of Dayn.txt"
     putStrLn "--big   Use Dayn_big.txt instead of Dayn.txt"
     exitWith (ExitFailure 1)
