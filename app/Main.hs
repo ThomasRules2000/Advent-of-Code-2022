@@ -36,6 +36,7 @@ import qualified Days.Day22         as Day22 (runDay)
 import qualified Days.Day23         as Day23 (runDay)
 import qualified Days.Day24         as Day24 (runDay)
 import qualified Days.Day25         as Day25 (runDay)
+import System.Exit (exitWith, ExitCode (ExitFailure))
 {- ORMOLU_ENABLE -}
 
 days :: [(String -> IO (Maybe Integer, Maybe Integer), String)]
@@ -129,15 +130,23 @@ main :: IO ()
 main = do
     args <- getArgs
     toRun <- case (if "-a" `elem` args then [1..25] else mapMaybe readMaybe args) of
-                    [] -> (toGregorian . utctDay) <$> getCurrentTime >>= \case
+                    [] -> getCurrentTime >>= (\case
                         (_, 12, d) | d <= 25 -> return [d]
-                        _ -> error "Usage: stack run n"
+                        _ -> printUsage) .  toGregorian . utctDay
                     xs -> return xs
     let ds | "--test" `elem` args = testDays
            | "--big"  `elem` args = bigDays
            | otherwise            = days
     times <- Map.fromList . zip toRun <$> mapM (\arg -> uncurry (performDay arg) $ fromMaybe (error $ printf "Day %d not found" arg) $ lookup arg (zip [1..] ds)) toRun
     printSummary times
+
+printUsage :: IO a
+printUsage = do
+    putStrLn "Usage: stack run [n1 [n2 [...]]]"
+    putStrLn "On days of Advent, n1 is automatically specified if you do not"
+    putStrLn "--test  Use Dayn_test.txt instead of Dayn.txt"
+    putStrLn "--big   Use Dayn_big.txt instead of Dayn.txt"
+    exitWith (ExitFailure 1)
 
 performDay :: Int -> (String -> IO (Maybe Integer, Maybe Integer)) -> String -> IO (Maybe Integer, Maybe Integer)
 performDay day func file = do
