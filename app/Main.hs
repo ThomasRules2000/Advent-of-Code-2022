@@ -4,6 +4,8 @@ import           Data.List          (intercalate)
 import           Data.Map.Strict    (Map)
 import qualified Data.Map.Strict    as Map
 import           Data.Maybe         (fromMaybe, mapMaybe)
+import           Data.Time.Calendar (toGregorian)
+import           Data.Time.Clock    (utctDay, getCurrentTime)
 import           System.Environment (getArgs)
 import           Text.Printf        (printf)
 import           Text.Read          (readMaybe)
@@ -126,9 +128,13 @@ testDays = [
 main :: IO ()
 main = do
     args <- getArgs
-    let toRun = if "-a" `elem` args then [1..25] else mapMaybe readMaybe args
+    toRun <- case (if "-a" `elem` args then [1..25] else mapMaybe readMaybe args) of
+                    [] -> (toGregorian . utctDay) <$> getCurrentTime >>= \case
+                        (_, 12, d) | d <= 25 -> return [d]
+                        _ -> error "Usage: stack run n"
+                    xs -> return xs
     let ds | "--test" `elem` args = testDays
-           | "--big"  `elem` args = bigDays 
+           | "--big"  `elem` args = bigDays
            | otherwise            = days
     times <- Map.fromList . zip toRun <$> mapM (\arg -> uncurry (performDay arg) $ fromMaybe (error $ printf "Day %d not found" arg) $ lookup arg (zip [1..] ds)) toRun
     printSummary times
