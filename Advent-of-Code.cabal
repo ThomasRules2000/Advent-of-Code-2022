@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 276783f487d9af87078a981d235497312264c2b1548963658346a89d64166858
+-- hash: f71289359bbc5b259c8441b921a015970ee289970264161ec1fec7fd1d0ea035
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -85,6 +85,7 @@ library
     , matrix
     , mtl
     , split
+    , time
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -95,6 +96,19 @@ executable AOC-exe
       Paths_Advent_of_Code
   hs-source-dirs:
       app
+  default-extensions:
+      ApplicativeDo
+      TupleSections
+      NumericUnderscores
+      TypeSynonymInstances
+      FlexibleInstances
+      ScopedTypeVariables
+      DeriveGeneric
+      DeriveAnyClass
+      LambdaCase
+      DeriveFunctor
+      DeriveFoldable
+      RecordWildCards
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Advent-of-Code
@@ -104,6 +118,7 @@ executable AOC-exe
     , matrix
     , mtl
     , split
+    , time
     , unordered-containers
     , vector
   default-language: Haskell2010

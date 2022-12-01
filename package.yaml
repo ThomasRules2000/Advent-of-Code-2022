@@ -27,6 +27,7 @@ dependencies:
 - extra
 - unordered-containers
 - mtl
+- time
 
 library:
   source-dirs: src
@@ -46,6 +47,19 @@ library:
 
 executables:
   AOC-exe:
+    default-extensions:
+      - ApplicativeDo
+      - TupleSections
+      - NumericUnderscores
+      - TypeSynonymInstances
+      - FlexibleInstances
+      - ScopedTypeVariables
+      - DeriveGeneric
+      - DeriveAnyClass
+      - LambdaCase 
+      - DeriveFunctor
+      - DeriveFoldable
+      - RecordWildCards
     main:                Main.hs
     source-dirs:         app
     ghc-options:
