@@ -28,6 +28,8 @@ dependencies:
 - unordered-containers
 - mtl
 - time
+- http-conduit
+- bytestring
 
 library:
   source-dirs: src
@@ -44,6 +46,7 @@ library:
     - DeriveFunctor
     - DeriveFoldable
     - RecordWildCards
+    - TypeApplications
 
 executables:
   AOC-exe:

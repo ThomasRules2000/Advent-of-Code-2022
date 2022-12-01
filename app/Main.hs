@@ -5,7 +5,7 @@ import           Data.Map.Strict    (Map)
 import qualified Data.Map.Strict    as Map
 import           Data.Maybe         (fromMaybe, mapMaybe)
 import           Data.Time.Calendar (toGregorian)
-import           Data.Time.Clock    (utctDay, getCurrentTime)
+import           Data.Time.Clock    (getCurrentTime, utctDay)
 import           System.Environment (getArgs)
 import           Text.Printf        (printf)
 import           Text.Read          (readMaybe)
@@ -36,7 +36,7 @@ import qualified Days.Day22         as Day22 (runDay)
 import qualified Days.Day23         as Day23 (runDay)
 import qualified Days.Day24         as Day24 (runDay)
 import qualified Days.Day25         as Day25 (runDay)
-import System.Exit (exitWith, ExitCode (ExitFailure))
+import           System.Exit        (exitFailure)
 {- ORMOLU_ENABLE -}
 
 days :: [(String -> IO (Maybe Integer, Maybe Integer), String)]
@@ -132,7 +132,7 @@ main = do
     toRun <- case (if "-a" `elem` args then [1..25] else mapMaybe readMaybe args) of
                     [] -> getCurrentTime >>= (\case
                         (_, 12, d) | d <= 25 -> return [d]
-                        _ -> printUsage) .  toGregorian . utctDay
+                        _                    -> printUsage) .  toGregorian . utctDay
                     xs -> return xs
     let ds | "--test" `elem` args = testDays
            | "--big"  `elem` args = bigDays
@@ -147,7 +147,7 @@ printUsage = do
     putStrLn "-a      Run all days instead of the ones specified"
     putStrLn "--test  Use Dayn_test.txt instead of Dayn.txt"
     putStrLn "--big   Use Dayn_big.txt instead of Dayn.txt"
-    exitWith (ExitFailure 1)
+    exitFailure
 
 performDay :: Int -> (String -> IO (Maybe Integer, Maybe Integer)) -> String -> IO (Maybe Integer, Maybe Integer)
 performDay day func file = do

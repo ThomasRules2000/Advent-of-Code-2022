@@ -1,13 +1,21 @@
+{-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module Program.RunDay where
-import           Control.Exception (SomeException, evaluate, try)
-import           Data.Either.Extra (eitherToMaybe)
-import           Data.Functor      (($>))
-import           System.CPUTime    (getCPUTime)
-import           Text.Printf       (printf)
+import           Control.Exception      (SomeException, evaluate, try)
+import           Control.Monad.Extra    (unlessM)
+import qualified Data.ByteString.Char8  as BS
+import           Data.Either.Extra      (eitherToMaybe)
+import           Data.Functor           (($>))
+import           Network.HTTP.Simple
+import           System.CPUTime         (getCPUTime)
+import           System.Directory.Extra (doesFileExist)
+import           System.Exit            (exitFailure)
+import           Text.Printf            (printf)
+import           Text.Read              (readMaybe)
 
 runDay :: (Show out1, Show out2) => (String -> inp) -> (inp -> out1) -> (inp -> out2) -> String -> IO (Maybe Integer, Maybe Integer)
 runDay parser part1 part2 s = do
+    unlessM (doesFileExist s) $ downloadFile s
     parserStart <- getCPUTime
     file <- try $ readFile s >>= (evaluate . parser)
     parserEnd <- getCPUTime
@@ -34,6 +42,22 @@ runDay parser part1 part2 s = do
             putStrLn $ either (\(e :: SomeException) -> "Unable to run Part 2!\n" ++ show e) show p2Res
 
             return (eitherToMaybe p1Res $> p1Time, eitherToMaybe p2Res $> p2Time)
+
+downloadFile :: String -> IO ()
+downloadFile f = case readMaybe @Int $ take 2 $ drop 9 f of
+    Nothing -> putStrLn ("Can't find file " ++ f ++ "!") >> exitFailure
+    Just n -> do
+        key <- BS.readFile "sessionkey.txt"
+        req <- addRequestHeader "Cookie" ("session=" <> key) <$> parseRequest ("https://adventofcode.com/2022/day/" ++ show n ++ "/input")
+        resp <- httpBS req
+        case getResponseStatusCode resp of
+            200 -> BS.writeFile f $ getResponseBody resp
+            _ -> do
+                putStrLn $ "Unable to download " <> f <> " from the server"
+                putStrLn $ "Response Code: " <> show (getResponseStatusCode resp)
+                putStrLn "Response: "
+                BS.putStrLn $ getResponseBody resp
+                exitFailure
 
 
 timeString :: Integer -> String

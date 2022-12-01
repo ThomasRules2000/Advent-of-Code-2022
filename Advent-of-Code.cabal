@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f71289359bbc5b259c8441b921a015970ee289970264161ec1fec7fd1d0ea035
+-- hash: 683727c3f0b190b1eeb0760184ef652d76c5f903041aa8a087a7501c73ac5a7f
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -78,10 +78,13 @@ library
       DeriveFunctor
       DeriveFoldable
       RecordWildCards
+      TypeApplications
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
     , extra
+    , http-conduit
     , matrix
     , mtl
     , split
@@ -113,8 +116,10 @@ executable AOC-exe
   build-depends:
       Advent-of-Code
     , base >=4.7 && <5
+    , bytestring
     , containers
     , extra
+    , http-conduit
     , matrix
     , mtl
     , split
