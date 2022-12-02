@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 683727c3f0b190b1eeb0760184ef652d76c5f903041aa8a087a7501c73ac5a7f
+-- hash: b7497495f0dbefd8c218d6a36abae6fc8622a5e3af6b396ba174f973b0f3b6da
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Days.Day01
+      Days.Day01Base
       Days.Day02
       Days.Day03
       Days.Day04
@@ -52,6 +53,7 @@ library
       Days.Day25
       Program.RunDay
       Util.BinTree
+      Util.Circ
       Util.Coord
       Util.Field
       Util.HexTile
@@ -79,6 +81,7 @@ library
       DeriveFoldable
       RecordWildCards
       TypeApplications
+      DataKinds
   build-depends:
       base >=4.7 && <5
     , bytestring
@@ -86,6 +89,7 @@ library
     , extra
     , http-conduit
     , matrix
+    , mod
     , mtl
     , split
     , time
@@ -121,6 +125,7 @@ executable AOC-exe
     , extra
     , http-conduit
     , matrix
+    , mod
     , mtl
     , split
     , time

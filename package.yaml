@@ -30,6 +30,7 @@ dependencies:
 - time
 - http-conduit
 - bytestring
+- mod
 
 library:
   source-dirs: src
@@ -47,6 +48,7 @@ library:
     - DeriveFoldable
     - RecordWildCards
     - TypeApplications
+    - DataKinds
 
 executables:
   AOC-exe:
