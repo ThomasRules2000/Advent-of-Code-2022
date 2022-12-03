@@ -11,3 +11,6 @@ import qualified Data.Set   as Set
 
 catMaybes :: Ord a => Set (Maybe a) -> Set a
 catMaybes = Set.map fromJust . Set.filter isJust
+
+intersections :: (Ord a, Foldable f) => f (Set a) -> Set a
+intersections = foldl1 Set.intersection
