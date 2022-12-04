@@ -11,6 +11,8 @@ import           Text.Printf        (printf)
 import           Text.Read          (readMaybe)
 
 {- ORMOLU_DISABLE -}
+import           Data.Bifunctor     (first)
+import           Data.Tuple.Extra   (fst3, snd3, thd3)
 import qualified Days.Day01         as Day01 (runDay)
 import qualified Days.Day02         as Day02 (runDay)
 import qualified Days.Day03         as Day03 (runDay)
@@ -36,10 +38,13 @@ import qualified Days.Day22         as Day22 (runDay)
 import qualified Days.Day23         as Day23 (runDay)
 import qualified Days.Day24         as Day24 (runDay)
 import qualified Days.Day25         as Day25 (runDay)
+import           Formatting         (formatToString)
+import           Formatting.Clock   (timeSpecs)
+import           System.Clock       (TimeSpec (..))
 import           System.Exit        (exitFailure)
 {- ORMOLU_ENABLE -}
 
-days :: [(String -> IO (Maybe Integer, Maybe Integer), String)]
+days :: [(String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec), String)]
 days = [
     (Day01.runDay, "input/Day01.txt"),
     (Day02.runDay, "input/Day02.txt"),
@@ -68,7 +73,7 @@ days = [
     (Day25.runDay, "input/Day25.txt")
     ]
 
-bigDays :: [(String -> IO (Maybe Integer, Maybe Integer), String)]
+bigDays :: [(String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec), String)]
 bigDays = [
     (Day01.runDay, "input/Day01_big.txt"),
     (Day02.runDay, "input/Day02_big.txt"),
@@ -97,7 +102,7 @@ bigDays = [
     (Day25.runDay, "input/Day25_big.txt")
     ]
 
-testDays :: [(String -> IO (Maybe Integer, Maybe Integer), String)]
+testDays :: [(String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec), String)]
 testDays = [
     (Day01.runDay, "input/Day01_test.txt"),
     (Day02.runDay, "input/Day02_test.txt"),
@@ -149,21 +154,38 @@ printUsage = do
     putStrLn "--big   Use Dayn_big.txt instead of Dayn.txt"
     exitFailure
 
-performDay :: Int -> (String -> IO (Maybe Integer, Maybe Integer)) -> String -> IO (Maybe Integer, Maybe Integer)
+performDay :: Int -> (String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)) -> String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 performDay day func file = do
     putStrLn $ printf "===== DAY %d =====" day
     func file
 
-printSummary :: Map Int (Maybe Integer, Maybe Integer) -> IO ()
+data Day = Day Int Part
+    deriving (Eq, Ord)
+
+instance Show Day where
+    show (Day d p) = show d ++ "." ++ show p
+
+data Part = Parser
+          | One
+          | Two
+          deriving (Eq, Ord)
+
+instance Show Part where
+    show Parser = "p"
+    show One    = "1"
+    show Two    = "2"
+
+printSummary :: Map Int (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec) -> IO ()
 printSummary results = do
     putStrLn "====== SUMMARY ======"
-    let part1s = Map.mapKeys ((++".1") . show) $ fst <$> results
-        part2s = Map.mapKeys ((++".2") . show) $ snd <$> results
-        parts  = Map.toList $ part1s <> part2s
+    let parsers = Map.mapKeys (`Day` Parser) $ fst3 <$> results
+        part1s  = Map.mapKeys (`Day` One)    $ snd3 <$> results
+        part2s  = Map.mapKeys (`Day` Two)    $ thd3 <$> results
+        parts   = map (first show) $ Map.toList $ parsers <> part1s <> part2s
 
         fails = [p | (p, Nothing) <- parts]
-        fasts = [(p, t) | (p, Just t) <- parts, t <  10^12]
-        slows = [(p, t) | (p, Just t) <- parts, t >= 10^12]
+        fasts = [(p, t) | (p, Just t) <- parts, t <  TimeSpec{sec=1, nsec=0}]
+        slows = [(p, t) | (p, Just t) <- parts, t >= TimeSpec{sec=1, nsec=0}]
 
         greatSuccess = null fails && null slows
         nFails = if null fails then "No" else show $ length fails
@@ -171,12 +193,13 @@ printSummary results = do
         nSlows = if null slows then "No" else show $ length slows
 
     when greatSuccess $ putStr "All "
-    putStr $ printf "%s parts completed under 1 second" nFasts
+    putStrLn $ printf "%s parts completed under 1 second" nFasts
     unless greatSuccess $ do
-        putStrLn "\n Of the remainder:"
+        putStrLn " Of the remainder:"
         unless (null fails) $ do
             putStrLn $ printf "  %s parts failed" nFails
             putStrLn $ "    " ++ intercalate ", " fails
         unless (null slows) $ do
             putStrLn $ printf "  %s parts took longer than 1s" nSlows
-            putStrLn $ "    " ++ intercalate ", " (map (uncurry (printf "%s (%.2fs)")) $ fmap ((/10^12) . fromIntegral :: Integer -> Double) <$> slows)
+            putStrLn $ "    " ++ intercalate ", " (map (uncurry (printf "%s (%s)")) $ fmap (formatToString timeSpecs 0) <$> slows)
+    putStrLn $ "Total Time: " ++ formatToString timeSpecs 0 (sum $ map snd $ fasts ++ slows)

@@ -33,6 +33,8 @@ dependencies:
 - mod
 - composition
 - bifunctors
+- clock
+- formatting
 
 library:
   source-dirs: src

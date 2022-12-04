@@ -3,9 +3,10 @@ import           Data.Bifunctor (bimap)
 import           Data.Char      (ord)
 import           Data.Mod       (Mod, unMod)
 import qualified Program.RunDay as R (runDay)
+import           System.Clock   (TimeSpec)
 import           Util.Util      (listToTuple)
 
-runDay :: String -> IO (Maybe Integer, Maybe Integer)
+runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
 
 type RPS = Mod 3
