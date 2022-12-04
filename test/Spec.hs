@@ -1,6 +1,7 @@
 import           Control.Exception (SomeException (..), try)
 import           Data.Bifunctor    (second)
-import           Data.Either       (rights)
+import           Data.Function     ((&))
+import           Data.Maybe        (mapMaybe)
 import           Test.Hspec        (Spec, hspec)
 
 import qualified Days.Day01        as Day01 (testDay)
@@ -28,7 +29,6 @@ import qualified Days.Day22        as Day22 (testDay)
 import qualified Days.Day23        as Day23 (testDay)
 import qualified Days.Day24        as Day24 (testDay)
 import qualified Days.Day25        as Day25 (testDay)
-
 
 
 testDays :: [(String -> String -> Spec, String)]
@@ -62,5 +62,7 @@ testDays = [
 
 main :: IO ()
 main = do
-    inputs <- (mapM (try . sequence . second (sequence . second readFile)) $ zip [1..] testDays) :: IO [Either SomeException (Int, (String -> String -> Spec, String))]
-    hspec $ mapM_ (\(day, (td, filename)) -> td ("Day " <> show day) filename) $ rights inputs
+    inputs <- mapM (try . sequence . second readFile) testDays
+    hspec $ mapM_ (\(day, (td, filename)) -> td ("Day " <> show day) filename)
+          $ mapMaybe (\case {(x, Right y) -> Just (x,y); (_, Left (_::SomeException)) -> Nothing})
+          $ zip [1..] inputs
