@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b7497495f0dbefd8c218d6a36abae6fc8622a5e3af6b396ba174f973b0f3b6da
+-- hash: 71d64844ab85c7e324fb0e1832d2e1cf4cf774fb983635b55ed085f253df5204
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -84,7 +84,9 @@ library
       DataKinds
   build-depends:
       base >=4.7 && <5
+    , bifunctors
     , bytestring
+    , composition
     , containers
     , extra
     , http-conduit
@@ -120,7 +122,9 @@ executable AOC-exe
   build-depends:
       Advent-of-Code
     , base >=4.7 && <5
+    , bifunctors
     , bytestring
+    , composition
     , containers
     , extra
     , http-conduit

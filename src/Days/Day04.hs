@@ -1,19 +1,24 @@
 module Days.Day04 where
-import qualified Program.RunDay as R (runDay)
+import           Data.Biapplicative (biliftA2)
+import           Data.Bifunctor     (bimap)
+import           Data.List          (sort)
+import           Data.List.Split    (splitOn)
+import qualified Program.RunDay     as R (runDay)
+import           Util.Util          (listToTuple)
 
 runDay :: String -> IO (Maybe Integer, Maybe Integer)
 runDay = R.runDay parser part1 part2
 
-type Input = [Int]
+type Input = [((Int, Int), (Int, Int))]
 
 type Output1 = Int
 type Output2 = Int
 
 parser :: String -> Input
-parser = undefined
+parser = map (listToTuple . sort . map (listToTuple . map read . splitOn "-") . splitOn ",") . lines
 
 part1 :: Input -> Output1
-part1 = undefined
+part1 = length . filter (uncurry (||) . uncurry (biliftA2 (==) (>=)))
 
 part2 :: Input -> Output2
-part2 = undefined
+part2 = length . filter (uncurry (>=) . bimap snd fst)
