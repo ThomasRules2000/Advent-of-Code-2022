@@ -1,18 +1,22 @@
 module Main where
 import           Control.Monad      (unless, when)
+import           Data.Bifunctor     (first)
 import           Data.List          (intercalate)
 import           Data.Map.Strict    (Map)
 import qualified Data.Map.Strict    as Map
 import           Data.Maybe         (fromMaybe, mapMaybe)
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock    (getCurrentTime, utctDay)
+import           Data.Tuple.Extra   (fst3, snd3, thd3)
+import           Formatting         (formatToString)
+import           Formatting.Clock   (timeSpecs)
+import           System.Clock       (TimeSpec (..))
 import           System.Environment (getArgs)
+import           System.Exit        (exitFailure)
 import           Text.Printf        (printf)
 import           Text.Read          (readMaybe)
 
 {- ORMOLU_DISABLE -}
-import           Data.Bifunctor     (first)
-import           Data.Tuple.Extra   (fst3, snd3, thd3)
 import qualified Days.Day01         as Day01 (runDay)
 import qualified Days.Day02         as Day02 (runDay)
 import qualified Days.Day03         as Day03 (runDay)
@@ -38,10 +42,6 @@ import qualified Days.Day22         as Day22 (runDay)
 import qualified Days.Day23         as Day23 (runDay)
 import qualified Days.Day24         as Day24 (runDay)
 import qualified Days.Day25         as Day25 (runDay)
-import           Formatting         (formatToString)
-import           Formatting.Clock   (timeSpecs)
-import           System.Clock       (TimeSpec (..))
-import           System.Exit        (exitFailure)
 {- ORMOLU_ENABLE -}
 
 days :: [(String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec), String)]
