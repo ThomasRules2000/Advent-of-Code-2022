@@ -1,13 +1,18 @@
 module Days.Day02 where
-import           Data.Bifunctor (bimap)
-import           Data.Char      (ord)
-import           Data.Mod       (Mod, unMod)
-import qualified Program.RunDay as R (runDay)
-import           System.Clock   (TimeSpec)
-import           Util.Util      (listToTuple)
+import           Data.Bifunctor  (bimap)
+import           Data.Char       (ord)
+import           Data.Mod        (Mod, unMod)
+import qualified Program.RunDay  as R (runDay)
+import qualified Program.TestDay as T (testDay)
+import           System.Clock    (TimeSpec)
+import           Test.Hspec      (Spec)
+import           Util.Util       (listToTuple)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
+
+testDay :: String -> String -> Spec
+testDay = T.testDay parser part1 part2 15 12
 
 type RPS = Mod 3
 

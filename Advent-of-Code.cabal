@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8995250efd1f7b21f9143d6d7ccc5fe031bad75e9314833b36bd0acdbff969d3
+-- hash: 807813dbfe6532d615cb7bde67c1a5f46c9e6435f27a0b4a18ef7568a72472b6
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -52,6 +52,7 @@ library
       Days.Day24
       Days.Day25
       Program.RunDay
+      Program.TestDay
       Util.BinTree
       Util.Circ
       Util.Coord
@@ -91,12 +92,13 @@ library
     , containers
     , extra
     , formatting
+    , hspec
     , http-conduit
     , matrix
     , mod
-    , mtl
     , split
     , time
+    , transformers
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -131,12 +133,55 @@ executable AOC-exe
     , containers
     , extra
     , formatting
+    , hspec
     , http-conduit
     , matrix
     , mod
-    , mtl
     , split
     , time
+    , transformers
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
+
+test-suite AOC-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_Advent_of_Code
+  hs-source-dirs:
+      test
+  default-extensions:
+      ApplicativeDo
+      TupleSections
+      NumericUnderscores
+      TypeSynonymInstances
+      FlexibleInstances
+      ScopedTypeVariables
+      DeriveGeneric
+      DeriveAnyClass
+      LambdaCase
+      DeriveFunctor
+      DeriveFoldable
+      RecordWildCards
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Advent-of-Code
+    , base >=4.7 && <5
+    , bifunctors
+    , bytestring
+    , clock
+    , composition
+    , containers
+    , extra
+    , formatting
+    , hspec
+    , http-conduit
+    , matrix
+    , mod
+    , split
+    , time
+    , transformers
     , unordered-containers
     , vector
   default-language: Haskell2010

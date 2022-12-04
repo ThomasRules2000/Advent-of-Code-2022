@@ -26,7 +26,7 @@ dependencies:
 - matrix
 - extra
 - unordered-containers
-- mtl
+- transformers
 - time
 - http-conduit
 - bytestring
@@ -35,6 +35,7 @@ dependencies:
 - bifunctors
 - clock
 - formatting
+- hspec
 
 library:
   source-dirs: src
@@ -71,6 +72,30 @@ executables:
       - RecordWildCards
     main:                Main.hs
     source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - Advent-of-Code
+
+tests:
+  AOC-test:
+    default-extensions:
+      - ApplicativeDo
+      - TupleSections
+      - NumericUnderscores
+      - TypeSynonymInstances
+      - FlexibleInstances
+      - ScopedTypeVariables
+      - DeriveGeneric
+      - DeriveAnyClass
+      - LambdaCase 
+      - DeriveFunctor
+      - DeriveFoldable
+      - RecordWildCards
+    main: Spec.hs
+    source-dirs: test
     ghc-options:
     - -threaded
     - -rtsopts
