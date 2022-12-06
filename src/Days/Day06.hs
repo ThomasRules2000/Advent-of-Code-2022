@@ -1,7 +1,5 @@
 module Days.Day06 where
-import           Data.List       (tails)
-import           Data.Set        (Set)
-import qualified Data.Set        as Set
+import           Data.List       (tails, nub)
 import qualified Program.RunDay  as R (runDay)
 import qualified Program.TestDay as T (testDay)
 import           System.Clock    (TimeSpec)
@@ -28,4 +26,4 @@ part2 :: Input -> Output2
 part2 = solve 14
 
 solve :: Int -> String -> Int
-solve n = (+n) . length . takeWhile ((<n) . Set.size) . map (Set.fromList . take n) . tails
+solve n = (+n) . length . takeWhile ((<n) . length . nub . take n) . tails
