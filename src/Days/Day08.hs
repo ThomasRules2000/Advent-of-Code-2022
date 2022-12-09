@@ -28,7 +28,7 @@ parser :: String -> Input
 parser = Map.fromGrid . map (map digitToInt) . lines
 
 part1 :: Input -> Output1
-part1 m = Map.size $ Map.filterWithKey (\k _ -> visible m maxPos k) m
+part1 m = length $ filter (visible m maxPos) $ Map.keys m
     where maxPos = Set.findMax $ Map.keysSet m
 
 visible :: Map Pos Int -> Pos -> Pos -> Bool
@@ -49,4 +49,4 @@ part2 m = maximum $ map (scenicScore m maxPos) $ [(x,y) | x <- [1..xMax-1], y <-
 
 scenicScore :: Map Pos Int -> Pos -> Pos -> Int
 scenicScore m maxPos p = product $ map (length . takeWhileIncl (<tree) . map (m Map.!)) $ getLines maxPos p
-    where tree  = m Map.! p
+    where tree = m Map.! p
