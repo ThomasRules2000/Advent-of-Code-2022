@@ -1,12 +1,12 @@
 module Days.Day09 where
+import           Data.Bifunctor  (bimap)
 import           Data.Set        (Set)
 import qualified Data.Set        as Set
 import qualified Program.RunDay  as R (runDay)
 import qualified Program.TestDay as T (testDay)
 import           System.Clock    (TimeSpec)
 import           Test.Hspec      (Spec)
-import Util.Util (listToTuple)
-import Data.Bifunctor (bimap)
+import           Util.Util       (listToTuple)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
