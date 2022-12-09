@@ -41,21 +41,21 @@ doMove ps (m, n) = (last newPos, Set.fromList $ map last newPos)
     where newPos = take (n+1) $ iterate (moveSingle m) ps
 
 moveSingle :: Move -> [Pos] -> [Pos]
-moveSingle m (oldHead@(hx, hy):ps) = newHead : moveKnot (oldHead, newHead) ps
+moveSingle m ((hx, hy):ps) = newHead : moveKnot newHead ps
     where newHead = case m of
                         U -> (hx, hy-1)
                         D -> (hx, hy+1)
                         L -> (hx-1, hy)
                         R -> (hx+1, hy)
 
-moveKnot :: (Pos, Pos) -> [Pos] -> [Pos]
+moveKnot :: Pos -> [Pos] -> [Pos]
 moveKnot _ [] = []
-moveKnot (oldPrev, newPrev@(px, py)) (next@(nx, ny):rest) = newNext : moveKnot (next, newNext) rest
+moveKnot newPrev@(px, py) (next@(nx, ny):rest) = newNext : moveKnot newNext rest
     where
         newNext
             | next `elem` getAround newPrev = next
             | px == nx || py == ny = head $ filter (`elem` getAround newPrev) [(nx+1, ny), (nx-1, ny), (nx, ny+1), (nx, ny-1)]
-            | otherwise = head $ filter (`elem` getAround newPrev) [(nx+1, ny+1), (nx+1, ny-1), (nx-1, ny+1), (nx-1, ny-1)]
+            | otherwise = head $ filter (`elem` getAround newPrev) [(x+nx, y+ny) | x <- [-1,1], y <- [-1,1]]
 
 part2 :: Input -> Output2
 part2 = getAns 10
