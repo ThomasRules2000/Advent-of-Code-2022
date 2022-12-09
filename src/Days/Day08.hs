@@ -9,7 +9,7 @@ import qualified Program.TestDay as T (testDay)
 import           System.Clock    (TimeSpec)
 import           Test.Hspec      (Spec)
 import qualified Util.Map        as Map
-import Debug.Trace
+import           Util.Util       (takeWhileIncl)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
@@ -28,25 +28,25 @@ parser :: String -> Input
 parser = Map.fromGrid . map (map digitToInt) . lines
 
 part1 :: Input -> Output1
-part1 m = Map.size $ Map.filterWithKey (\k v -> visible m k) m
+part1 m = Map.size $ Map.filterWithKey (\k _ -> visible m maxPos k) m
+    where maxPos = Set.findMax $ Map.keysSet m
 
-visible :: Map Pos Int -> Pos -> Bool
-visible m p@(x, y) = any (all (<tree)) [north, south, east, west]
+visible :: Map Pos Int -> Pos -> Pos -> Bool
+visible m maxPos p = any (all ((<tree) . (m Map.!))) $ getLines maxPos p
+    where tree  = m Map.! p
+
+getLines :: Pos -> Pos -> [[Pos]]
+getLines (xMax, yMax) (x0, y0) = [north, south, east, west]
     where
-        tree  = m Map.! p
-        north = Map.filterWithKey (\(x1, y1) _ -> x < x1 && y == y1) m
-        south = Map.filterWithKey (\(x1, y1) _ -> x > x1 && y == y1) m
-        east  = Map.filterWithKey (\(x1, y1) _ -> x == x1 && y < y1) m
-        west  = Map.filterWithKey (\(x1, y1) _ -> x == x1 && y > y1) m
+        north = [(x, y0) | x <- [x0-1, x0-2..0]]
+        south = [(x, y0) | x <- [x0+1..xMax]]
+        east  = [(x0, y) | y <- [y0-1, y0-2..0]]
+        west  = [(x0, y) | y <- [y0+1..yMax]]
 
 part2 :: Input -> Output2
-part2 m = maximum $ Set.map (scenicScore m) $ Map.keysSet m
+part2 m = maximum $ map (scenicScore m maxPos) $ [(x,y) | x <- [1..xMax-1], y <- [1..yMax-1]]
+    where maxPos@(xMax, yMax) = Set.findMax $ Map.keysSet m
 
-scenicScore :: Map Pos Int -> Pos -> Int
-scenicScore m p@(x, y) = product $ map (length . (\(xs, ys) -> take 1 ys ++ xs) . span (<tree)) [north, south, east, west]
-    where
-        tree  = m Map.! p
-        north = Map.elems $ Map.filterWithKey (\(x1, y1) _ -> x < x1 && y == y1) m
-        south = reverse $ Map.elems $ Map.filterWithKey (\(x1, y1) _ -> x > x1 && y == y1) m
-        east  = Map.elems $ Map.filterWithKey (\(x1, y1) _ -> x == x1 && y < y1) m
-        west  = reverse $ Map.elems $ Map.filterWithKey (\(x1, y1) _ -> x == x1 && y > y1) m
+scenicScore :: Map Pos Int -> Pos -> Pos -> Int
+scenicScore m maxPos p = product $ map (length . takeWhileIncl (<tree) . map (m Map.!)) $ getLines maxPos p
+    where tree  = m Map.! p

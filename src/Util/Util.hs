@@ -71,3 +71,9 @@ traceTag s x = trace (s <> show x) x
 
 sumTuples :: (Foldable t, Num a, Num b) => t (a, b) -> (a, b)
 sumTuples = foldl' (uncurry bimap . bimap (+) (+)) (0, 0)
+
+takeWhileIncl :: (a -> Bool) -> [a] -> [a]
+takeWhileIncl _ [] = []
+takeWhileIncl p (x:xs)
+    | p x = x : takeWhileIncl p xs
+    | otherwise = [x]
