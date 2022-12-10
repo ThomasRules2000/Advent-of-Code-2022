@@ -8,7 +8,9 @@ import           Data.Either.Extra      (eitherToMaybe)
 import           Data.Functor           (($>))
 import           Formatting             (formatToString)
 import           Formatting.Clock       (timeSpecs)
-import           Network.HTTP.Simple
+import           Network.HTTP.Simple    (addRequestHeader, getResponseBody,
+                                         getResponseStatusCode, httpBS,
+                                         parseRequest)
 import           System.Clock           (Clock (Monotonic), TimeSpec, getTime)
 import           System.CPUTime         (getCPUTime)
 import           System.Directory.Extra (doesFileExist)
