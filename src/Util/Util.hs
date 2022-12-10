@@ -77,3 +77,7 @@ takeWhileIncl _ [] = []
 takeWhileIncl p (x:xs)
     | p x = x : takeWhileIncl p xs
     | otherwise = [x]
+
+takeEveryN :: Int -> [a] -> [a]
+takeEveryN _ [] = []
+takeEveryN n (x:xs) = x : (takeEveryN n $ drop (n-1) xs)
