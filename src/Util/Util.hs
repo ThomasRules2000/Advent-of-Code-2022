@@ -60,12 +60,6 @@ hexToInt = foldl (\acc x -> 16*acc + x) 0 . map go
                | 'A' <= c && c <= 'F' = ord c - ord 'A' + 10
                | otherwise = undefined
 
-ppMatrix :: Matrix Bool -> String
-ppMatrix matrix = unlines (Matrix.toLists (boolChar <$> matrix))
-    where boolChar :: Bool -> Char
-          boolChar True  = '█'
-          boolChar False = ' '
-
 traceTag :: Show a => String -> a -> a
 traceTag s x = trace (s <> show x) x
 

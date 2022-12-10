@@ -6,19 +6,21 @@ import qualified Program.RunDay  as R (runDay)
 import qualified Program.TestDay as T (testDay)
 import           System.Clock    (TimeSpec)
 import           Test.Hspec      (Spec)
-import           Util.NoQuotes   (NoQuotes (..))
-import           Util.Util       (ppMatrix, takeEveryN)
+import qualified Util.Picture    as Picture
+import           Util.Picture    (Picture (..))
+import           Util.Util       (takeEveryN)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
 
 testDay :: String -> String -> Spec
-testDay = T.testDay parser part1 part2 13140 (NoQuotes $ unlines ["██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ",
-                                                                  "███   ███   ███   ███   ███   ███   ███ ",
-                                                                  "████    ████    ████    ████    ████    ",
-                                                                  "█████     █████     █████     █████     ",
-                                                                  "██████      ██████      ██████      ████",
-                                                                  "███████       ███████       ███████     "])
+testDay = T.testDay parser part1 part2 13140
+    (Picture.fromHashDot $ unlines ["##..##..##..##..##..##..##..##..##..##..",
+                                    "###...###...###...###...###...###...###.",
+                                    "####....####....####....####....####....",
+                                    "#####.....#####.....#####.....#####.....",
+                                    "######......######......######......####",
+                                    "#######.......#######.......#######....."])
 
 data Instruction = NoOp | AddX Int
     deriving (Eq, Ord, Show)
@@ -26,7 +28,7 @@ data Instruction = NoOp | AddX Int
 type Input = [Instruction]
 
 type Output1 = Int
-type Output2 = NoQuotes
+type Output2 = Picture
 
 parser :: String -> Input
 parser = map (getInstruction . words) . lines
@@ -45,4 +47,4 @@ getSeq x (NoOp:is)     = x : getSeq x is
 getSeq x ((AddX n):is) = x : x : getSeq (x+n) is
 
 part2 :: Input -> Output2
-part2 = NoQuotes . ppMatrix . Matrix.fromLists . chunksOf 40 . zipWith (\c x -> x - 1 <= c && c <= x + 1) (cycle [0..39]) . getSeq 1
+part2 = Picture . Matrix.fromLists . chunksOf 40 . zipWith (\c x -> x - 1 <= c && c <= x + 1) (cycle [0..39]) . getSeq 1
