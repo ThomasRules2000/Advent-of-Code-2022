@@ -1,6 +1,6 @@
 module Util.Util where
-import           Data.Bifunctor  (first, bimap)
-import           Data.Char       (toLower, ord)
+import           Data.Bifunctor  (bimap, first)
+import           Data.Char       (ord, toLower)
 import           Data.Foldable   (foldl')
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
@@ -30,16 +30,6 @@ rotate :: Int -> [a] -> [a]
 rotate _ [] = []
 rotate n xs = zipWith const (drop n (cycle xs)) xs
 
--- binToDec :: [Bool] -> Int
--- binToDec = go . reverse
---     where
---         go :: [Bool] -> Int
---         go []     = 0
---         go (x:xs) = fromEnum x + 2 * go xs
-
--- binToDec :: [Bool] -> Int
--- binToDec = sum . map fst . filter snd . zip [2^x | x <-[0..]] . reverse
-
 binToDec :: [Bool] -> Int
 binToDec = foldl' (\acc b -> 2*acc + fromEnum b) 0
 
@@ -55,7 +45,7 @@ hexToBin s = replicate (4 - length i `mod` 4) False ++ i
 
 hexToInt :: String -> Int
 hexToInt = foldl (\acc x -> 16*acc + x) 0 . map go
-    where go c | '0' <= c && c <= '9' = ord c - ord '0' 
+    where go c | '0' <= c && c <= '9' = ord c - ord '0'
                | 'a' <= c && c <= 'f' = ord c - ord 'a' + 10
                | 'A' <= c && c <= 'F' = ord c - ord 'A' + 10
                | otherwise = undefined
@@ -73,5 +63,5 @@ takeWhileIncl p (x:xs)
     | otherwise = [x]
 
 takeEveryN :: Int -> [a] -> [a]
-takeEveryN _ [] = []
-takeEveryN n (x:xs) = x : (takeEveryN n $ drop (n-1) xs)
+takeEveryN _ []     = []
+takeEveryN n (x:xs) = x : takeEveryN n (drop (n-1) xs)
