@@ -13,7 +13,12 @@ runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
 
 testDay :: String -> String -> Spec
-testDay = T.testDay parser part1 part2 13140 (NoQuotes "")
+testDay = T.testDay parser part1 part2 13140 (NoQuotes $ unlines ["██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ",
+                                                                  "███   ███   ███   ███   ███   ███   ███ ",
+                                                                  "████    ████    ████    ████    ████    ",
+                                                                  "█████     █████     █████     █████     ",
+                                                                  "██████      ██████      ██████      ████",
+                                                                  "███████       ███████       ███████     "])
 
 data Instruction = NoOp | AddX Int
     deriving (Eq, Ord, Show)
