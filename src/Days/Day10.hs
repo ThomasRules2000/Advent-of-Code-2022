@@ -1,7 +1,6 @@
 module Days.Day10 where
 import           Data.Composition ((.:))
 import           Data.List.Split  (chunksOf)
-import           Data.Matrix      (Matrix)
 import qualified Data.Matrix      as Matrix
 import qualified Program.RunDay   as R (runDay)
 import qualified Program.TestDay  as T (testDay)
@@ -47,7 +46,7 @@ part1 = sum
       . getSeq 1
 
 getSeq :: Int -> [Instruction] -> [Int]
-getSeq x []            = []
+getSeq _ []            = []
 getSeq x (NoOp:is)     = x : getSeq x is
 getSeq x ((AddX n):is) = x : x : getSeq (x+n) is
 

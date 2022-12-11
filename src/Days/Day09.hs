@@ -41,7 +41,8 @@ doMove ps (m, n) = (last newPos, Set.fromList $ map last newPos)
     where newPos = take (n+1) $ iterate (moveSingle m) ps
 
 moveSingle :: Move -> [Pos] -> [Pos]
-moveSingle m ((hx, hy):ps) = newHead : moveKnot newHead ps
+moveSingle _ []            = []
+moveSingle m ((hx, hy):ps) = moveKnot newHead ps
     where newHead = case m of
                         U -> (hx, hy-1)
                         D -> (hx, hy+1)
@@ -49,13 +50,12 @@ moveSingle m ((hx, hy):ps) = newHead : moveKnot newHead ps
                         R -> (hx+1, hy)
 
 moveKnot :: Pos -> [Pos] -> [Pos]
-moveKnot _ [] = []
-moveKnot newPrev@(px, py) (next@(nx, ny):rest) = newNext : moveKnot newNext rest
-    where
-        newNext
-            | next `elem` getAround newPrev = next
-            | px == nx || py == ny = head $ filter (`elem` getAround newPrev) [(nx+1, ny), (nx-1, ny), (nx, ny+1), (nx, ny-1)]
-            | otherwise = head $ filter (`elem` getAround newPrev) [(x+nx, y+ny) | x <- [-1,1], y <- [-1,1]]
+moveKnot prev [] = [prev]
+moveKnot prev@(px, py) (next@(nx, ny):rest) = prev : moveKnot newNext rest
+    where newNext
+              | next `elem` getAround prev = next
+              | px == nx || py == ny = head $ filter (`elem` getAround prev) [(nx+1, ny), (nx-1, ny), (nx, ny+1), (nx, ny-1)]
+              | otherwise            = head $ filter (`elem` getAround prev) [(x+nx, y+ny) | x <- [-1,1], y <- [-1,1]]
 
 part2 :: Input -> Output2
 part2 = getAns 10

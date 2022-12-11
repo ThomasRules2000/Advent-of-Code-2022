@@ -50,7 +50,7 @@ parseMonkey s = Monkey {..}
         _items = Seq.fromList $ map (read . filter isDigit) $ drop 2 iWords
         _op = case opWords !! 4 of
             "*" -> case last opWords of
-                "old" -> (^2)
+                "old" -> join (*)
                 _     -> (*n)
             "+" -> (+n)
             _   -> error $ "Invalid Operation " ++ show opWords
@@ -73,10 +73,7 @@ solve n f ms = product $ take 2 $ sortOn negate $ map _inspections $ Vector.toLi
 processMonkey :: (Int -> Int) -> MVector s Monkey -> Int -> ST s ()
 processMonkey f v n = do
     m <- MVector.read v n
-    let processItem w = MVector.modify v (items %~ (Seq.|> newWorry)) $
-            if newWorry `mod` m ^. test == 0
-                then m ^. trueThrow
-                else m ^. falseThrow
+    let processItem w = MVector.modify v (items %~ (Seq.|> newWorry)) $ m ^. if newWorry `mod` m ^. test == 0 then trueThrow else falseThrow
             where newWorry = (f .: view op) m w
 
     mapM_ processItem $ m ^. items

@@ -41,6 +41,7 @@ parseCommand c = case take 2 c of
         ".." -> Out
         p    -> In p
     "ls" -> Ls $ Set.fromList $ map (parseFile . listToTuple . words) $ tail $ lines c
+    _    -> error $ "Invalid command: " ++ show c
     where
         parseFile (size, name) = case size of
             "dir" -> Directory name

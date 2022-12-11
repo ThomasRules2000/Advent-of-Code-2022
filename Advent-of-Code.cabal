@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 807813dbfe6532d615cb7bde67c1a5f46c9e6435f27a0b4a18ef7568a72472b6
+-- hash: 7bdfae5c4400a69a92627b198f636e9436f69b643bbf1d236287b155e9a49a66
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -54,13 +54,13 @@ library
       Program.RunDay
       Program.TestDay
       Util.BinTree
-      Util.Circ
       Util.Coord
       Util.Field
       Util.HexTile
       Util.Map
       Util.NoQuotes
       Util.Pair
+      Util.Picture
       Util.Set
       Util.Tile
       Util.Util
@@ -83,6 +83,8 @@ library
       RecordWildCards
       TypeApplications
       DataKinds
+      TemplateHaskell
+  ghc-options: -Wall
   build-depends:
       base >=4.7 && <5
     , bifunctors
@@ -94,11 +96,13 @@ library
     , formatting
     , hspec
     , http-conduit
+    , lens
     , matrix
     , mod
     , split
     , time
     , transformers
+    , tuple
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -135,11 +139,13 @@ executable AOC-exe
     , formatting
     , hspec
     , http-conduit
+    , lens
     , matrix
     , mod
     , split
     , time
     , transformers
+    , tuple
     , unordered-containers
     , vector
   default-language: Haskell2010
@@ -177,11 +183,13 @@ test-suite AOC-test
     , formatting
     , hspec
     , http-conduit
+    , lens
     , matrix
     , mod
     , split
     , time
     , transformers
+    , tuple
     , unordered-containers
     , vector
   default-language: Haskell2010

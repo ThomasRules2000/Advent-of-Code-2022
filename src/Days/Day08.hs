@@ -2,7 +2,6 @@ module Days.Day08 where
 import           Data.Char       (digitToInt)
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
-import           Data.Set        (Set)
 import qualified Data.Set        as Set
 import qualified Program.RunDay  as R (runDay)
 import qualified Program.TestDay as T (testDay)

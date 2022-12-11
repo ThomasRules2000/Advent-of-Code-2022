@@ -31,7 +31,7 @@ priority :: Char -> Int
 priority c
     | 'a' <= c && c <= 'z' = 1 + ord c - ord 'a'
     | 'A' <= c && c <= 'Z' = 27 + ord c - ord 'A'
-    | otherwise = undefined
+    | otherwise = error $ "Invalid Character " ++ show c
 
 part2 :: Input -> Output2
 part2 = sum . map (priority . Set.findMin . Set.intersections) . chunksOf 3 . map (uncurry Set.union)
