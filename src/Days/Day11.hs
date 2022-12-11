@@ -1,16 +1,20 @@
 module Days.Day11 where
-import           Data.Bifunctor     (bimap)
-import           Data.Char          (isDigit)
-import           Data.IntMap.Strict (IntMap)
-import qualified Data.IntMap.Strict as IntMap
-import           Data.List          (sort)
-import           Data.List.Split    (splitOn)
-import           Data.Sequence      (Seq)
-import qualified Data.Sequence      as Seq
-import qualified Program.RunDay     as R (runDay)
-import qualified Program.TestDay    as T (testDay)
-import           System.Clock       (TimeSpec)
-import           Test.Hspec         (Spec)
+import           Control.Monad       (replicateM_)
+import           Control.Monad.ST    (ST, runST)
+import           Data.Bifunctor      (bimap)
+import           Data.Char           (isDigit)
+import           Data.List           (sort)
+import           Data.List.Split     (splitOn)
+import           Data.Sequence       (Seq)
+import qualified Data.Sequence       as Seq
+import           Data.Vector         (Vector)
+import qualified Data.Vector         as Vector
+import           Data.Vector.Mutable (MVector, STVector)
+import qualified Data.Vector.Mutable as MVector
+import qualified Program.RunDay      as R (runDay)
+import qualified Program.TestDay     as T (testDay)
+import           System.Clock        (TimeSpec)
+import           Test.Hspec          (Spec)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
@@ -27,13 +31,13 @@ data Monkey = Monkey {
     inspections :: Integer
 }
 
-type Input = (IntMap Monkey, Integer)
+type Input = ([Monkey], Integer)
 
 type Output1 = Integer
 type Output2 = Integer
 
 parser :: String -> Input
-parser = bimap (IntMap.fromDistinctAscList . zip [0..]) (foldr lcm 1) . unzip . map parseMonkey . splitOn "\n\n"
+parser = fmap (foldr lcm 1) . unzip . map parseMonkey . splitOn "\n\n"
 
 parseMonkey :: String -> (Monkey, Integer)
 parseMonkey s = (Monkey {..}, testN)
@@ -55,27 +59,25 @@ parseMonkey s = (Monkey {..}, testN)
 part1 :: Input -> Output1
 part1 = solve (`div` 3) 20 . fst
 
-solve :: (Integer -> Integer) -> Int -> IntMap Monkey -> Integer
-solve f n monkeyMap = product
-                    $ take 2
-                    $ reverse
-                    $ sort
-                    $ map inspections
-                    $ IntMap.elems
-                    $ (!!n)
-                    $ iterate (\mm -> foldl (processMonkey f) mm monkeys) monkeyMap
-                    where monkeys = IntMap.keys monkeyMap
+solve :: (Integer -> Integer) -> Int -> [Monkey] -> Integer
+solve f n ms = product $ take 2 $ reverse $ sort $ map inspections $ Vector.toList $ runST $ do
+    v <- Vector.thaw $ Vector.fromList ms
+    replicateM_ n $ mapM_ (processMonkey f v) monkeys
+    Vector.freeze v
+    where monkeys = [0..length ms - 1]
 
-processMonkey :: (Integer -> Integer) -> IntMap Monkey -> Int -> IntMap Monkey
-processMonkey f im n = IntMap.insert n m{items=Seq.empty, inspections=inspections m + fromIntegral (Seq.length $ items m)} $ foldl processItem im $ items m
-    where
-        m = im IntMap.! n
-        processItem :: IntMap Monkey -> Integer -> IntMap Monkey
-        processItem im' w = IntMap.insert newMonkeyNum newMonkey{items=items newMonkey Seq.|> newWorry} im'
-            where
-                newWorry = f $ op m w
-                newMonkeyNum = if test m newWorry then trueThrow m else falseThrow m
-                newMonkey = im' IntMap.! newMonkeyNum
+processMonkey :: (Integer -> Integer) -> MVector s Monkey -> Int -> ST s ()
+processMonkey f v n = do
+    m <- MVector.read v n
+
+    let processItem w = do
+            let newWorry = f $ op m w
+            let newMonkeyNum = if test m newWorry then trueThrow m else falseThrow m
+            newMonkey <- MVector.read v newMonkeyNum
+            MVector.write v newMonkeyNum $ newMonkey{items=items newMonkey Seq.|> newWorry}
+
+    mapM_ processItem $ items m
+    MVector.write v n m{items=Seq.empty, inspections=inspections m + fromIntegral (Seq.length $ items m)}
 
 part2 :: Input -> Output2
 part2 (im, d) = solve (`mod` d) 10000 im
