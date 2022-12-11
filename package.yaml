@@ -36,9 +36,12 @@ dependencies:
 - clock
 - formatting
 - hspec
+- lens
+- tuple
 
 library:
   source-dirs: src
+  ghc-options: -Wall
   default-extensions:
     - ApplicativeDo
     - TupleSections
@@ -54,6 +57,7 @@ library:
     - RecordWildCards
     - TypeApplications
     - DataKinds
+    - TemplateHaskell
 
 executables:
   AOC-exe:
