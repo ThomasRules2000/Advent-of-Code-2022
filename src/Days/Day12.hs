@@ -1,18 +1,18 @@
 module Days.Day12 where
-import           Data.Char
-import           Data.Heap        (MinPrioHeap)
-import qualified Data.Heap        as Heap
-import           Data.Map.Strict  (Map)
-import qualified Data.Map.Strict  as Map
-import           Data.Set         (Set)
-import qualified Data.Set         as Set
-import           Data.Tuple.All   (Curry (uncurryN))
-import           Data.Tuple.Extra (second3)
-import qualified Program.RunDay   as R (runDay)
-import qualified Program.TestDay  as T (testDay)
-import           System.Clock     (TimeSpec)
-import           Test.Hspec       (Spec)
-import qualified Util.Map         as Map
+import           Data.Bifunctor  (bimap)
+import           Data.Char       (ord)
+import           Data.Heap       (MinPrioHeap)
+import qualified Data.Heap       as Heap
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import           Data.Set        (Set)
+import qualified Data.Set        as Set
+import           Data.Tuple.All  (uncurryN)
+import qualified Program.RunDay  as R (runDay)
+import qualified Program.TestDay as T (testDay)
+import           System.Clock    (TimeSpec)
+import           Test.Hspec      (Spec)
+import qualified Util.Map        as Map
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
@@ -42,7 +42,7 @@ getElevation c
     | otherwise = error $ "Invalid Character " <> show c
 
 part1 :: Input -> Output1
-part1 = uncurryN (dijkstra Set.empty) . second3 Set.singleton . fmap (Heap.singleton . (0,))
+part1 = uncurryN (dijkstra Set.empty) . bimap Set.singleton (Heap.singleton . (0,))
 
 dijkstra :: Set Pos -> Map Pos Int -> Set Pos -> MinPrioHeap Int Pos  -> Int
 dijkstra visited elevations starts queue
