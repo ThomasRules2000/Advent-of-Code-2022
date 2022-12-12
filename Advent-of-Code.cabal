@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7bdfae5c4400a69a92627b198f636e9436f69b643bbf1d236287b155e9a49a66
+-- hash: 80dfdda775b127c9dbb51e3f134ab6ed53ed7e7ebf70e10d9878d912155dfda0
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -54,6 +54,7 @@ library
       Program.RunDay
       Program.TestDay
       Util.BinTree
+      Util.Circ
       Util.Coord
       Util.Field
       Util.HexTile
@@ -94,6 +95,7 @@ library
     , containers
     , extra
     , formatting
+    , heap
     , hspec
     , http-conduit
     , lens
@@ -137,6 +139,7 @@ executable AOC-exe
     , containers
     , extra
     , formatting
+    , heap
     , hspec
     , http-conduit
     , lens
@@ -181,6 +184,7 @@ test-suite AOC-test
     , containers
     , extra
     , formatting
+    , heap
     , hspec
     , http-conduit
     , lens
