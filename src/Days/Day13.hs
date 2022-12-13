@@ -11,7 +11,7 @@ import           System.Clock                     (TimeSpec)
 import           Test.Hspec                       (Spec)
 
 import           Data.Bifunctor                   (bimap)
-import           Data.List                        (elemIndex, sortBy)
+import           Data.List                        (elemIndex, sort)
 import           Data.Maybe                       (fromJust)
 import           Data.Tuple.Extra                 (dupe)
 
@@ -22,7 +22,7 @@ testDay :: String -> String -> Spec
 testDay = T.testDay parser part1 part2 13 140
 
 data Packet = I Int | L [Packet]
-    deriving (Eq, Ord, Show)
+    deriving (Eq, Show)
 
 type Input = [(Packet, Packet)]
 
@@ -39,27 +39,24 @@ packetParser :: Parser Packet
 packetParser = L <$> (I <$> decimal <|> between (char '[') (char ']') packetParser) `sepBy` char ','
 
 part1 :: Input -> Output1
-part1 = sum . map fst . filter ((==LT) . snd) . zip [1..] . map (uncurry comp)
+part1 = sum . map fst . filter ((==LT) . snd) . zip [1..] . map (uncurry compare)
 
-comp :: Packet -> Packet -> Ordering
-comp (I n1) (I n2)
-    | n1 > n2 = GT
-    | n1 < n2 = LT
-    | otherwise = EQ
-comp (L ps1) (L ps2) = case filter (/=EQ) $ zipWith comp ps1 ps2 of
-    [] | length ps1 > length ps2 -> GT
-       | length ps2 > length ps1 -> LT
-       | otherwise -> EQ
-    (x:_) -> x
-comp p1@(I _) p2 = comp (L [p1]) p2
-comp p1 p2@(I _) = comp p1 (L [p2])
+instance Ord Packet where
+    compare (I n1) (I n2) = compare n1 n2
+    compare (L p1) (L p2) = case filter (/=EQ) $ zipWith compare p1 p2 of
+        [] | length p1 > length p2 -> GT
+           | length p2 > length p1 -> LT
+           | otherwise -> EQ
+        (x:_) -> x
+    compare p1@(I _) p2 = compare (L [p1]) p2
+    compare p1 p2@(I _) = compare p1 (L [p2])
 
 
 part2 :: Input -> Output2
 part2 = uncurry (*)
       . bimap ((+1) . fromJust . elemIndex k1) ((+1) . fromJust . elemIndex k2)
       . dupe
-      . sortBy comp
+      . sort
       . (++[k1, k2])
       . concatMap (\(p1, p2) -> [p1, p2])
     where
