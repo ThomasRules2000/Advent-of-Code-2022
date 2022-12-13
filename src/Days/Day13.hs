@@ -24,6 +24,16 @@ testDay = T.testDay parser part1 part2 13 140
 data Packet = I Int | L [Packet]
     deriving (Eq, Show)
 
+instance Ord Packet where
+    compare (I n1) (I n2) = compare n1 n2
+    compare (L p1) (L p2) = case filter (/=EQ) $ zipWith compare p1 p2 of
+        [] | length p1 > length p2 -> GT
+           | length p2 > length p1 -> LT
+           | otherwise -> EQ
+        (x:_) -> x
+    compare p1@(I _) p2 = compare (L [p1]) p2
+    compare p1 p2@(I _) = compare p1 (L [p2])
+
 type Input = [(Packet, Packet)]
 
 type Output1 = Int
@@ -39,18 +49,7 @@ packetParser :: Parser Packet
 packetParser = L <$> (I <$> decimal <|> between (char '[') (char ']') packetParser) `sepBy` char ','
 
 part1 :: Input -> Output1
-part1 = sum . map fst . filter ((==LT) . snd) . zip [1..] . map (uncurry compare)
-
-instance Ord Packet where
-    compare (I n1) (I n2) = compare n1 n2
-    compare (L p1) (L p2) = case filter (/=EQ) $ zipWith compare p1 p2 of
-        [] | length p1 > length p2 -> GT
-           | length p2 > length p1 -> LT
-           | otherwise -> EQ
-        (x:_) -> x
-    compare p1@(I _) p2 = compare (L [p1]) p2
-    compare p1 p2@(I _) = compare p1 (L [p2])
-
+part1 = sum . map fst . filter (uncurry (<) . snd) . zip [1..]
 
 part2 :: Input -> Output2
 part2 = uncurry (*)
