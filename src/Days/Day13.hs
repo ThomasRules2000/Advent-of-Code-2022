@@ -39,11 +39,8 @@ type Input = [(Packet, Packet)]
 type Output1 = Int
 type Output2 = Int
 
-parser :: String -> Input
-parser = fromRight [] . parseOnly topParser . BS.pack
-
-topParser :: Parser [(Packet, Packet)]
-topParser = ((,) <$> packetParser <*> (endOfLine *> packetParser)) `sepBy` (endOfLine *> endOfLine)
+parser :: Parser Input
+parser = ((,) <$> packetParser <*> (endOfLine *> packetParser)) `sepBy` (endOfLine *> endOfLine)
 
 packetParser :: Parser Packet
 packetParser = L <$> (I <$> decimal <|> between (char '[') (char ']') packetParser) `sepBy` char ','

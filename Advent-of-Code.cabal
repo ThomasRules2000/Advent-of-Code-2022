@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: da350d4ab6701340de709eac99bef0a7f7f2ad259ee9acca90b481562b176aff
+-- hash: 5e732c0a004a37f754b43c70e3a80c9909da5fbd0b2686291546e62f8d260686
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -61,6 +61,7 @@ library
       Util.Map
       Util.NoQuotes
       Util.Pair
+      Util.ParserFunc
       Util.Picture
       Util.Set
       Util.Tile

@@ -12,17 +12,17 @@ import           Network.HTTP.Simple    (addRequestHeader, getResponseBody,
                                          getResponseStatusCode, httpBS,
                                          parseRequest)
 import           System.Clock           (Clock (Monotonic), TimeSpec, getTime)
-import           System.CPUTime         (getCPUTime)
 import           System.Directory.Extra (doesFileExist)
 import           System.Exit            (exitFailure)
 import           Text.Printf            (printf)
 import           Text.Read              (readMaybe)
+import           Util.ParserFunc        (ParserFunc, makeParser)
 
-runDay :: (Show out1, Show out2) => (String -> inp) -> (inp -> out1) -> (inp -> out2) -> String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
+runDay :: (Show out1, Show out2, ParserFunc f inp) => f -> (inp -> out1) -> (inp -> out2) -> String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay parser part1 part2 s = do
     unlessM (doesFileExist s) $ downloadFile s
     parserStart <- getTime Monotonic
-    file <- try $ readFile s >>= (evaluate . parser)
+    file <- try $ readFile s >>= (evaluate . makeParser parser)
     parserEnd <- getTime Monotonic
     case file of
         Left (e :: SomeException) -> putStrLn "Unable to parse input!" >> print e $> (Nothing, Nothing, Nothing)
