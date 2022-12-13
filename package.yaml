@@ -39,6 +39,8 @@ dependencies:
 - lens
 - tuple
 - heap
+- attoparsec
+- parser-combinators
 
 library:
   source-dirs: src

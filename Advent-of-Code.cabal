@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 80dfdda775b127c9dbb51e3f134ab6ed53ed7e7ebf70e10d9878d912155dfda0
+-- hash: da350d4ab6701340de709eac99bef0a7f7f2ad259ee9acca90b481562b176aff
 
 name:           Advent-of-Code
 version:        0.1.0.0
@@ -87,7 +87,8 @@ library
       TemplateHaskell
   ghc-options: -Wall
   build-depends:
-      base >=4.7 && <5
+      attoparsec
+    , base >=4.7 && <5
     , bifunctors
     , bytestring
     , clock
@@ -101,6 +102,7 @@ library
     , lens
     , matrix
     , mod
+    , parser-combinators
     , split
     , time
     , transformers
@@ -131,6 +133,7 @@ executable AOC-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Advent-of-Code
+    , attoparsec
     , base >=4.7 && <5
     , bifunctors
     , bytestring
@@ -145,6 +148,7 @@ executable AOC-exe
     , lens
     , matrix
     , mod
+    , parser-combinators
     , split
     , time
     , transformers
@@ -176,6 +180,7 @@ test-suite AOC-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Advent-of-Code
+    , attoparsec
     , base >=4.7 && <5
     , bifunctors
     , bytestring
@@ -190,6 +195,7 @@ test-suite AOC-test
     , lens
     , matrix
     , mod
+    , parser-combinators
     , split
     , time
     , transformers
