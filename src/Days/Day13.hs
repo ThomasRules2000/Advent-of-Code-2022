@@ -2,9 +2,7 @@ module Days.Day13 where
 import           Control.Applicative              ((<|>))
 import           Control.Applicative.Combinators  (between, sepBy)
 import           Data.Attoparsec.ByteString.Char8 (Parser, char, decimal,
-                                                   endOfLine, parseOnly)
-import qualified Data.ByteString.Char8            as BS
-import           Data.Either                      (fromRight)
+                                                   endOfLine)
 import qualified Program.RunDay                   as R (runDay)
 import qualified Program.TestDay                  as T (testDay)
 import           System.Clock                     (TimeSpec)
