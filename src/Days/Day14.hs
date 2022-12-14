@@ -1,11 +1,12 @@
 module Days.Day14 where
 import           Control.Monad                    (when)
-import           Control.Monad.Trans.State.Strict (State, execState, get, gets,
+import           Control.Monad.Trans.State.Strict (State, execState, gets,
                                                    modify)
-import           Data.Bifunctor                   (first, second)
+import           Data.Bifunctor                   (bimap, first, second)
 import           Data.List.Split                  (splitOn)
 import           Data.Set                         (Set)
 import qualified Data.Set                         as Set
+import           Data.Tuple                       (swap)
 import qualified Program.RunDay                   as R (runDay)
 import qualified Program.TestDay                  as T (testDay)
 import           System.Clock                     (TimeSpec)
@@ -42,12 +43,10 @@ part1 = solve False
 numReachable :: Bool -> Set Pos -> Int -> Pos -> State (Set Pos, Bool) ()
 numReachable isFloor rocks maxY curr@(x,y)
     | y > maxY = modify $ if isFloor then first $ Set.insert curr else second $ const True
-    | otherwise = do
-        (visited, done) <- get
-        when (not done && curr `Set.notMember` visited) $ do
-            mapM_ (numReachable isFloor rocks maxY) nextPs
-            sand <- gets fst
-            when (all (`Set.member` sand) nextPs) $ modify $ first $ Set.insert curr
+    | otherwise = gets ((uncurry (&&) . bimap not (curr `Set.notMember`)) . swap) >>= flip when (do
+        mapM_ (numReachable isFloor rocks maxY) nextPs
+        sand <- gets fst
+        when (all (`Set.member` sand) nextPs) $ modify $ first $ Set.insert curr)
         where nextPs = filter (`Set.notMember` rocks) [(x, y+1), (x-1, y+1), (x+1, y+1)]
 
 solve :: Bool -> Set Pos -> Int
