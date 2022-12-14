@@ -54,13 +54,14 @@ library:
     - ScopedTypeVariables
     - DeriveGeneric
     - DeriveAnyClass
-    - LambdaCase 
+    - LambdaCase
     - DeriveFunctor
     - DeriveFoldable
     - RecordWildCards
     - TypeApplications
     - DataKinds
     - TemplateHaskell
+    - MultiWayIf
 
 executables:
   AOC-exe:
@@ -73,7 +74,7 @@ executables:
       - ScopedTypeVariables
       - DeriveGeneric
       - DeriveAnyClass
-      - LambdaCase 
+      - LambdaCase
       - DeriveFunctor
       - DeriveFoldable
       - RecordWildCards
@@ -97,7 +98,7 @@ tests:
       - ScopedTypeVariables
       - DeriveGeneric
       - DeriveAnyClass
-      - LambdaCase 
+      - LambdaCase
       - DeriveFunctor
       - DeriveFoldable
       - RecordWildCards

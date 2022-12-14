@@ -1,12 +1,16 @@
 module Days.Day14 where
-import           Data.List.Split (splitOn)
-import           Data.Set        (Set)
-import qualified Data.Set        as Set
-import qualified Program.RunDay  as R (runDay)
-import qualified Program.TestDay as T (testDay)
-import           System.Clock    (TimeSpec)
-import           Test.Hspec      (Spec)
-import           Util.Util       (listToTuple)
+import           Control.Monad                    (when)
+import           Control.Monad.Trans.State.Strict (State, execState, get, gets,
+                                                   modify)
+import           Data.Bifunctor                   (first, second)
+import           Data.List.Split                  (splitOn)
+import           Data.Set                         (Set)
+import qualified Data.Set                         as Set
+import qualified Program.RunDay                   as R (runDay)
+import qualified Program.TestDay                  as T (testDay)
+import           System.Clock                     (TimeSpec)
+import           Test.Hspec                       (Spec)
+import           Util.Util                        (listToTuple)
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
@@ -35,22 +39,19 @@ getRocks _ = Set.empty
 part1 :: Input -> Output1
 part1 = solve False
 
-dropSand :: Bool -> Int -> Set Pos -> Int
-dropSand isFloor maxY rocks = case moveSand isFloor maxY rocks (500, 0) of
-    Nothing -> 0
-    Just p | isFloor && p == (500,0) -> 1
-           | otherwise -> 1 + dropSand isFloor maxY (Set.insert p rocks)
-
-moveSand :: Bool -> Int -> Set Pos -> Pos -> Maybe Pos
-moveSand isFloor maxY rocks (x, y)
-    | y > maxY = if isFloor then Just (x,y) else Nothing -- Falling into the abyss/Settled on the floor
-    | (x,y+1) `Set.notMember` rocks = moveSand isFloor maxY rocks (x, y+1) -- Move down
-    | (x-1, y+1) `Set.notMember` rocks = moveSand isFloor maxY rocks (x-1, y+1) -- Move down left
-    | (x+1, y+1) `Set.notMember` rocks = moveSand isFloor maxY rocks (x+1, y+1) -- Move down right
-    | otherwise = Just (x,y) -- Settled on a rock or sand pile
+numReachable :: Bool -> Set Pos -> Int -> Pos -> State (Set Pos, Bool) ()
+numReachable isFloor rocks maxY curr@(x,y)
+    | y > maxY = modify $ if isFloor then first $ Set.insert curr else second $ const True
+    | otherwise = do
+        (visited, done) <- get
+        when (not done && curr `Set.notMember` visited) $ do
+            mapM_ (numReachable isFloor rocks maxY) nextPs
+            sand <- gets fst
+            when (all (`Set.member` sand) nextPs) $ modify $ first $ Set.insert curr
+        where nextPs = filter (`Set.notMember` rocks) [(x, y+1), (x-1, y+1), (x+1, y+1)]
 
 solve :: Bool -> Set Pos -> Int
-solve isFloor rocks = dropSand isFloor maxY rocks
+solve isFloor rocks = Set.size $ fst $ execState (numReachable isFloor rocks maxY (500,0)) (Set.empty, False)
     where maxY = Set.findMax $ Set.map snd rocks
 
 part2 :: Input -> Output2
