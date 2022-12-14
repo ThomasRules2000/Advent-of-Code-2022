@@ -1,12 +1,11 @@
 module Days.Day14 where
-import           Control.Monad                    (when)
+import           Control.Monad                    (when, unless)
 import           Control.Monad.Trans.State.Strict (State, execState, gets,
                                                    modify)
-import           Data.Bifunctor                   (bimap, first, second)
+import           Data.Bifunctor                   (first, second)
 import           Data.List.Split                  (splitOn)
 import           Data.Set                         (Set)
 import qualified Data.Set                         as Set
-import           Data.Tuple                       (swap)
 import qualified Program.RunDay                   as R (runDay)
 import qualified Program.TestDay                  as T (testDay)
 import           System.Clock                     (TimeSpec)
@@ -42,10 +41,15 @@ part1 = solve False
 
 numReachable :: Bool -> Set Pos -> Int -> Pos -> State (Set Pos, Bool) ()
 numReachable isFloor rocks maxY curr@(x,y)
+    -- If we go below maxY, for Part 1 we are done as this is the abyss, for Part 2 this is the floor so put the sand there
     | y > maxY = modify $ if isFloor then first $ Set.insert curr else second $ const True
-    | otherwise = gets ((uncurry (&&) . bimap not (curr `Set.notMember`)) . swap) >>= flip when (do
+    -- Otherwise, if we aren't done and we haven't already checked this square, consider the square
+    | otherwise = gets (uncurry (flip (||)) . first (curr `Set.member`)) >>= flip unless (do
+        -- First check the up to 3 squares the sand could move in to which aren't rocks
         mapM_ (numReachable isFloor rocks maxY) nextPs
+        -- Get the new places where there is sand
         sand <- gets fst
+        -- If there is now sand in the places where rocks weren't, put sand in the current square
         when (all (`Set.member` sand) nextPs) $ modify $ first $ Set.insert curr)
         where nextPs = filter (`Set.notMember` rocks) [(x, y+1), (x-1, y+1), (x+1, y+1)]
 
