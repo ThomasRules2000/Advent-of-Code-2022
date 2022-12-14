@@ -3,6 +3,7 @@ import           Control.Monad.Extra              (ifM)
 import           Control.Monad.Trans.State.Strict (State, evalState, gets,
                                                    modify)
 import           Data.Bifunctor                   (first, second)
+import           Data.Composition                 ((.:))
 import           Data.Functor                     (($>))
 import           Data.List.Split                  (splitOn)
 import           Data.Set                         (Set)
@@ -30,11 +31,10 @@ parser :: String -> Input
 parser = Set.unions . map (getRocks . map (listToTuple . map read . splitOn ",") . splitOn " -> ") . lines
 
 getRocks :: [Pos] -> Set Pos
-getRocks ((x1,y1):rest@((x2,y2):_)) = Set.union (Set.fromList newLine) $ getRocks rest
-    where newLine
-            | x1 == x2 = [(x1,y) | y <- [y1, (y1+signum (y2-y1))..y2]]
+getRocks ps = Set.unions $ zipWith (Set.fromList .: newLine) ps $ tail ps
+    where newLine (x1, y1) (x2, y2)
+            | x1 == x2  = [(x1,y) | y <- [y1, (y1+signum (y2-y1))..y2]]
             | otherwise = [(x,y1) | x <- [x1, (x1+signum (x2-x1))..x2]]
-getRocks _ = Set.empty
 
 part1 :: Input -> Output1
 part1 = solve False
