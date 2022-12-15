@@ -54,8 +54,9 @@ moveKnot prev [] = [prev]
 moveKnot prev@(px, py) (next@(nx, ny):rest) = prev : moveKnot newNext rest
     where newNext
               | next `elem` getAround prev = next
-              | px == nx || py == ny = head $ filter (`elem` getAround prev) [(nx+1, ny), (nx-1, ny), (nx, ny+1), (nx, ny-1)]
-              | otherwise            = head $ filter (`elem` getAround prev) [(x+nx, y+ny) | x <- [-1,1], y <- [-1,1]]
+              | px == nx  = (nx, ny + signum (py - ny))
+              | py == ny  = (nx + signum (px - nx), ny)
+              | otherwise = (nx + signum (px - nx), ny + signum (py - ny))
 
 part2 :: Input -> Output2
 part2 = getAns 10
