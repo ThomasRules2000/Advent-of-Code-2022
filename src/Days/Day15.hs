@@ -1,13 +1,12 @@
 module Days.Day15 where
-import           Data.Char          (isDigit)
-import           Data.List          (nub, sort)
-import           Data.Maybe         (mapMaybe)
-import           Data.Set           (Set)
-import qualified Data.Set           as Set
-import qualified Program.RunDay     as R (runDay)
-import qualified Program.TestDay    as T (testDay)
-import           System.Clock       (TimeSpec)
-import           Test.Hspec         (Spec)
+import           Data.Char                        (isDigit)
+import           Data.List                        (nub, sort)
+import           Data.Maybe                       (mapMaybe)
+import           Data.Tuple.Extra                 (both)
+import qualified Program.RunDay                   as R (runDay)
+import qualified Program.TestDay                  as T (testDay)
+import           System.Clock                     (TimeSpec)
+import           Test.Hspec                       (Spec)
 
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
@@ -82,17 +81,15 @@ maxCoord = 4_000_000
 -- maxCoord = 20
 
 part2 :: Input -> Output2
-part2 = searchLines . Set.fromList . map (uncurry getLineRanges)
+part2 = (\(x,y) -> 4_000_000 * x + y) . uncurry searchDiags . fmap concat . unzip . map (uncurry getDiags)
 
-searchLines :: Set [(Int, (Int, Int))] -> Int
-searchLines = go 0
+getDiags :: Pos -> Pos -> ((Pos, Int), [Pos])
+getDiags p@(px, py) b = ((p, dist-1), outer)
     where
-        go :: Int -> Set [(Int, (Int, Int))] -> Int
-        go y ranges
-            -- | y > maxCoord = error "Didn't find answer"
-            | length rs > 1 = 4_000_000 * (1 + snd (head rs)) + y
-            | otherwise = go (y+1) newSet
-            where
-                (inRange, outRange) = Set.spanAntitone ((==y) . fst . head) ranges
-                newSet = Set.union outRange $ Set.filter (not . null) $ Set.map tail inRange
-                rs = mergeRanges $ map (snd . head) $ Set.toList inRange
+        dist = 1 + manhattenDist p b
+        outer = filter (uncurry (&&) . both (\x -> x >= 0 && x <= maxCoord)) $ concat [[(xMin+d, py+d), (xMax-d, py+d), (xMin+d, py-d), (xMax-d, py-d)] | d <- [0..dist]]
+        xMin = px - dist
+        xMax = px + dist
+
+searchDiags :: [(Pos, Int)] -> [Pos] -> Pos
+searchDiags sensors = head . filter (\c -> all (\(p, d) -> manhattenDist p c > d) sensors)
