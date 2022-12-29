@@ -41,6 +41,7 @@ dependencies:
 - heap
 - attoparsec
 - parser-combinators
+- primitive
 
 library:
   source-dirs: src

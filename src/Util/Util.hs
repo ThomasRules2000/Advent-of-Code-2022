@@ -1,21 +1,19 @@
 module Util.Util where
-import           Data.Bifunctor  (bimap, first)
-import           Data.Char       (ord, toLower)
-import           Data.Foldable   (foldl')
-import           Data.Map.Strict (Map)
-import qualified Data.Map.Strict as Map
-import           Data.Matrix     (Matrix)
-import qualified Data.Matrix     as Matrix
-import           Data.Maybe      (fromJust, isJust)
-import           Data.Set        (Set)
-import qualified Data.Set        as Set
-import           Debug.Trace     (trace)
+import           Control.Monad  (filterM)
+import           Data.Bifunctor (bimap)
+import           Data.Char      (ord)
+import           Data.Foldable  (foldl', maximumBy, minimumBy)
+import           Data.Function  (on)
+import           Debug.Trace    (trace)
 
 listToTuple :: [a] -> (a, a)
 listToTuple [x,y] = (x, y)
 
 listToTuple3 :: [a] -> (a, a, a)
 listToTuple3 [x, y, z] = (x, y, z)
+
+listToTuple4 :: [a] -> (a, a, a, a)
+listToTuple4 [w, x, y, z] = (w, x, y, z)
 
 trimap :: (a -> a') -> (b -> b') -> (c -> c') -> (a, b, c) -> (a', b', c')
 trimap f g h (x, y, z) = (f x, g y, h z)
@@ -65,3 +63,16 @@ takeWhileIncl p (x:xs)
 takeEveryN :: Int -> [a] -> [a]
 takeEveryN _ []     = []
 takeEveryN n (x:xs) = x : takeEveryN n (drop (n-1) xs)
+
+toMaybe :: Bool -> a -> Maybe a
+toMaybe False _ = Nothing
+toMaybe True x  = Just x
+
+maximumOn :: (Foldable t, Ord b) => (a -> b) -> t a -> a
+maximumOn f = maximumBy (compare `on` f)
+
+minimumOn :: (Foldable t, Ord b) => (a -> b) -> t a -> a
+minimumOn f = minimumBy (compare `on` f)
+
+powerSet :: [a] -> [[a]]
+powerSet = filterM (const [True, False])
