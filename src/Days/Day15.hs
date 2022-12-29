@@ -1,12 +1,12 @@
 module Days.Day15 where
-import           Data.Char                        (isDigit)
-import           Data.List                        (nub, sort)
-import           Data.Maybe                       (mapMaybe)
-import           Data.Tuple.Extra                 (both)
-import qualified Program.RunDay                   as R (runDay)
-import qualified Program.TestDay                  as T (testDay)
-import           System.Clock                     (TimeSpec)
-import           Test.Hspec                       (Spec)
+import           Data.Char        (isDigit)
+import           Data.List        (nub, sort)
+import           Data.Maybe       (mapMaybe)
+import           Data.Tuple.Extra (both)
+import qualified Program.RunDay   as R (runDay)
+import qualified Program.TestDay  as T (testDay)
+import           System.Clock     (TimeSpec)
+import           Test.Hspec       (Spec)
 
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
@@ -23,7 +23,11 @@ type Output1 = Int
 type Output2 = Int
 
 parser :: String -> Input
-parser = map ((\[w,x,y,z] -> ((w,x),(y,z))) . map read . filter (not . null) . map (takeWhile (\x -> isDigit x || x == '-') . drop 2) . words) . lines
+parser = map ((\[w,x,y,z] -> ((w,x),(y,z)))
+       . map read
+       . filter (not . null)
+       . map (takeWhile (\x -> isDigit x || x == '-') . drop 2) . words)
+       . lines
 
 
 part1 :: Int -> Input -> Output1
@@ -43,7 +47,7 @@ getLineRange y p@(px,py) b = if xDist > 0 then Just (px - xDist, px + xDist) els
         maxDist = manhattenDist p b
         yDist = abs $ py - y
         xDist = maxDist - yDist
-        
+
 mergeRanges :: [(Int, Int)] -> [(Int, Int)]
 mergeRanges = go . sort
     where
