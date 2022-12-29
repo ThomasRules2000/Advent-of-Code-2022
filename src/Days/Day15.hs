@@ -10,10 +10,10 @@ import           Test.Hspec                       (Spec)
 
 
 runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
-runDay = R.runDay parser part1 part2
+runDay = R.runDay parser (part1 2_000_000) (part2 4_000_000)
 
 testDay :: String -> String -> Spec
-testDay = T.testDay parser part1 part2 0 0
+testDay = T.testDay parser (part1 10) (part2 20) 26 56000011
 
 type Pos = (Int, Int)
 
@@ -26,12 +26,8 @@ parser :: String -> Input
 parser = map ((\[w,x,y,z] -> ((w,x),(y,z))) . map read . filter (not . null) . map (takeWhile (\x -> isDigit x || x == '-') . drop 2) . words) . lines
 
 
-rowNum :: Int
-rowNum = 2_000_000
--- rowNum = 10
-
-part1 :: Input -> Output1
-part1 ps = subtract bs $ scanLine minX maxX merged
+part1 :: Int -> Input -> Output1
+part1 rowNum ps = subtract bs $ scanLine minX maxX merged
     where
         bs = length $ nub $ map fst $ filter ((==rowNum) . snd) $ map snd ps
         merged = mergeRanges $ mapMaybe (uncurry $ getLineRange rowNum) ps
@@ -47,14 +43,7 @@ getLineRange y p@(px,py) b = if xDist > 0 then Just (px - xDist, px + xDist) els
         maxDist = manhattenDist p b
         yDist = abs $ py - y
         xDist = maxDist - yDist
-
-getLineRanges :: Pos -> Pos -> [(Int, (Int, Int))]
-getLineRanges p@(px, py) b = yLows ++ yHighs
-    where
-        maxDist = manhattenDist p b
-        yLows  = dropWhile ((<0) . fst)         $ zip [(py-maxDist)..py-1] [(max 0 (px - xDist), min maxCoord (px + xDist)) | xDist <- [0..maxDist]]
-        yHighs = takeWhile ((<=maxCoord) . fst) $ zip [py..(py+maxDist)] [(max 0 (px - xDist), min maxCoord (px + xDist)) | xDist <- [maxDist, maxDist-1 .. 0]]
-
+        
 mergeRanges :: [(Int, Int)] -> [(Int, Int)]
 mergeRanges = go . sort
     where
@@ -76,15 +65,11 @@ scanLine minX maxX = go minX
             | otherwise = go (currX+1) rrs
 
 
-maxCoord :: Int
-maxCoord = 4_000_000
--- maxCoord = 20
+part2 :: Int -> Input -> Output2
+part2 maxCoord = (\(x,y) -> 4_000_000 * x + y) . uncurry searchDiags . fmap concat . unzip . map (uncurry $ getDiags maxCoord)
 
-part2 :: Input -> Output2
-part2 = (\(x,y) -> 4_000_000 * x + y) . uncurry searchDiags . fmap concat . unzip . map (uncurry getDiags)
-
-getDiags :: Pos -> Pos -> ((Pos, Int), [Pos])
-getDiags p@(px, py) b = ((p, dist-1), outer)
+getDiags :: Int -> Pos -> Pos -> ((Pos, Int), [Pos])
+getDiags maxCoord p@(px, py) b = ((p, dist-1), outer)
     where
         dist = 1 + manhattenDist p b
         outer = filter (uncurry (&&) . both (\x -> x >= 0 && x <= maxCoord)) $ concat [[(xMin+d, py+d), (xMax-d, py+d), (xMin+d, py-d), (xMax-d, py-d)] | d <- [0..dist]]
