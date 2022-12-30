@@ -16,7 +16,7 @@ runDay :: String -> IO (Maybe TimeSpec, Maybe TimeSpec, Maybe TimeSpec)
 runDay = R.runDay parser part1 part2
 
 testDay :: String -> String -> Spec
-testDay = T.testDay parser part1 part2 0 0
+testDay = T.testDay parser part1 part2 3 1623178306
 
 type Input = [Int]
 
