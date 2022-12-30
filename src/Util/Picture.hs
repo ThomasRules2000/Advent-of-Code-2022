@@ -18,7 +18,7 @@ fromHashDot :: String -> Picture
 fromHashDot = Picture . Matrix.fromLists . map (map (=='#')) . lines
 
 fromSet :: Set (Int, Int) -> Picture
-fromSet s = Picture $ Matrix.matrix rows cols $ (`Set.member` newSet)
+fromSet s = Picture $ Matrix.matrix rows cols (`Set.member` newSet)
     where
         minX = Set.findMin $ Set.map fst s
         minY = Set.findMin $ Set.map snd s
